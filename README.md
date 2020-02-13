@@ -18,7 +18,7 @@ Using the Middleware is fairly simple; provide a `Configuration` instance that d
 CORS related data for a given Origin. Pass that config to a `CorsMiddleware` instance and then 
 attach to the router layer you've implemented for your amphp application.
 
-```
+```php
 <?php
 
 require_once  __DIR__ . '/vendor/autoload.php';
