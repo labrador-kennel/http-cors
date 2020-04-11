@@ -1,6 +1,9 @@
 {
   "name": "cspray/labrador-http-cors",
   "description": "An Amp http-server middleware library to facilitate CORS",
+  "scripts": {
+    "test": "vendor/bin/phpunit"
+  },
   "require": {
     "amphp/http-server": "^1.0 || ^2.0"
   },
