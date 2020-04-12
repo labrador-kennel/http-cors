@@ -304,4 +304,25 @@ class CorsMiddlewareTest extends AsyncTestCase {
         $this->assertNull($actualResponse->getHeader('Access-Control-Max-Age'));
     }
 
+    public function testNoMaxAgeSetDoesNotSetHeader() {
+        $request = $this->createRequest('OPTIONS', '/some/path', [
+            'Access-Control-Request-Method' => 'GET'
+        ]);
+        $mock = $this->createMock(RequestHandler::class);
+        $mock->expects($this->never())
+            ->method('handleRequest');
+
+        $middleware = new CorsMiddleware($this->configuration(['max_age' => null]));
+        /** @var Response $actualResponse */
+        $actualResponse = yield $middleware->handleRequest($request, $mock);
+
+        $this->assertSame(Status::OK, $actualResponse->getStatus());
+        $this->assertSame('https://labrador.example.com', $actualResponse->getHeader('Access-Control-Allow-Origin'));
+        $this->assertSame('GET, POST, PUT, DELETE', $actualResponse->getHeader('Access-Control-Allow-Methods'));
+        $this->assertSame('X-Custom-Req-Header, Content-Type', $actualResponse->getHeader('Access-Control-Allow-Headers'));
+        $this->assertSame('X-Custom-Res-Header', $actualResponse->getHeader('Access-Control-Expose-Headers'));
+        $this->assertSame('true', $actualResponse->getHeader('Access-Control-Allow-Credentials'));
+        $this->assertFalse($actualResponse->hasHeader('Access-Control-Max-Age'));
+    }
+
 }
