@@ -1,5 +1,28 @@
 # Changelog
 
+## 0.3.0 - 2020-??-??
+
+#### Changed
+
+- Changed the `Configuration::getMaxAge()` method to return `?int` because sometimes this value does 
+not need to be explicitly set and using the browser default is preferred.
+- Updates the ArrayConfiguration instance to handle when a key is not present and ensures that required 
+values are passed in the constructor.
+
+## 0.2.1 - 2020-04-09
+
+#### Fixed
+
+- Fixes a bug where a wildcard origin `*` was not being properly respected in some 
+circumstances.
+
+## 0.2.0 - 2020-03-27
+
+#### Changed
+
+- Updated dependencies to allow for Amp http-server 2.0+
+- Other administrative tasks related to maintenance of the codebase
+
 ## 0.1.0 - 2019-02-09
 
 #### Added
