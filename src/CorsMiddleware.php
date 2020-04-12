@@ -23,9 +23,9 @@ final class CorsMiddleware implements Middleware {
      * @param Request $request
      * @param RequestHandler $requestHandler
      *
-     * @return Promise<\Amp\Http\Server\Response>
+     * @return Promise<Response>
      */
-    public function handleRequest(Request $request, RequestHandler $requestHandler): Promise {
+    public function handleRequest(Request $request, RequestHandler $requestHandler) : Promise {
         return call(function() use($request, $requestHandler) {
             if ($request->getMethod() === 'OPTIONS') {
                 return $this->handleOptionRequest($request);
@@ -79,7 +79,11 @@ final class CorsMiddleware implements Middleware {
             if ($this->configuration->shouldAllowCredentials()) {
                 $response->setHeader('Access-Control-Allow-Credentials', 'true');
             }
-            $response->setHeader('Access-Control-Max-Age', $this->configuration->getMaxAge());
+
+            $maxAge = $this->configuration->getMaxAge();
+            if (isset($maxAge)) {
+                $response->setHeader('Access-Control-Max-Age', $this->configuration->getMaxAge());
+            }
         }
 
         return $response;

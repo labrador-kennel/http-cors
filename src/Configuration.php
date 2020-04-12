@@ -19,7 +19,7 @@ interface Configuration {
      *
      * @return int
      */
-    public function getMaxAge() : int;
+    public function getMaxAge() : ?int;
 
     /**
      * Return the HTTP methods that are supported for cross-origin requests with this origin.

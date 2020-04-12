@@ -46,4 +46,44 @@ class ArrayConfigurationTest extends TestCase {
         $this->assertTrue($this->subject()->shouldAllowCredentials());
     }
 
+    public function testRequiredKeysNotGivenThrowsException() {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('An array with keys [origin, allowed_methods] MUST be provided with non-empty values');
+
+        new ArrayConfiguration([]);
+    }
+
+    public function testEmptyRequiredKeysGivenThrowsException() {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('An array with keys [origin, allowed_methods] MUST be provided with non-empty values');
+
+        new ArrayConfiguration(['origin' => '', 'allowed_methods' => []]);
+    }
+
+    public function testDefaultMaxAgeValue() {
+        $subject = new ArrayConfiguration(['origin' => 'https://example.com', 'allowed_methods' => ['GET']]);
+
+        $this->assertNull($subject->getMaxAge());
+    }
+
+    public function testDefaultAllowedHeaders() {
+        $subject = new ArrayConfiguration(['origin' => 'https://example.com', 'allowed_methods' => ['GET']]);
+
+        $this->assertIsArray($subject->getAllowedHeaders());
+        $this->assertEmpty($subject->getAllowedHeaders());
+    }
+
+    public function testDefaultExposableHeaders() {
+        $subject = new ArrayConfiguration(['origin' => 'https://example.com', 'allowed_methods' => ['GET']]);
+
+        $this->assertIsArray($subject->getExposableHeaders());
+        $this->assertEmpty($subject->getExposableHeaders());
+    }
+
+    public function testDefaultShouldAllowCredentials() {
+        $subject = new ArrayConfiguration(['origin' => 'https://example.com', 'allowed_methods' => ['GET']]);
+
+        $this->assertFalse($subject->shouldAllowCredentials());
+    }
+
 }
