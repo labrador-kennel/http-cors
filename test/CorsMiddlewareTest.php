@@ -7,6 +7,7 @@ use Amp\Http\Server\Request;
 use Amp\Http\Server\RequestHandler;
 use Amp\Http\Server\Response;
 use Amp\Http\Status;
+use Amp\PHPUnit\AsyncTestCase;
 use Amp\Success;
 use Cspray\Labrador\Http\Cors\ArrayConfiguration;
 use Cspray\Labrador\Http\Cors\Configuration;
