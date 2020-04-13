@@ -4,7 +4,7 @@ namespace Cspray\Labrador\Http\Cors;
 
 final class ArrayConfiguration implements Configuration {
 
-    private const REQUIRED_KEYS = ['origin', 'allowed_methods'];
+    private const REQUIRED_KEYS = ['origins', 'allowed_methods'];
 
     private $configuration;
 
@@ -33,10 +33,10 @@ final class ArrayConfiguration implements Configuration {
      * If the Origin header in the OPTIONS request matches this value the rest of this Configuration will determine
      * the headers that are returned. If no Configuration is present for the Origin is not allowed.
      *
-     * @return string
+     * @return string[]
      */
-    public function getOrigin(): string {
-        return $this->configuration['origin'];
+    public function getOrigins() : array {
+        return $this->configuration['origins'];
     }
 
     /**

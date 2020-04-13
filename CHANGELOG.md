@@ -2,12 +2,18 @@
 
 ## 0.3.0 - 2020-??-??
 
+**This release introduces breaking changes. Please review entries carefully when upgrading from a previous release.**
+
 #### Changed
 
 - Changed the `Configuration::getMaxAge()` method to return `?int` because sometimes this value does 
 not need to be explicitly set and using the browser default is preferred.
 - Updates the ArrayConfiguration instance to handle when a key is not present and ensures that required 
 values are passed in the constructor.
+- Renamed `Configuration::getOrigin()` -> `Configuration::getOrigins()` and it now expects an array of 
+string instead of just one. The thought process being that the rules that apply to 1 Origin is likely to 
+apply to another.
+
 
 ## 0.2.1 - 2020-04-09
 

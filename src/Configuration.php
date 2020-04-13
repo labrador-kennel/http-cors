@@ -10,9 +10,9 @@ interface Configuration {
      * If the Origin header in the OPTIONS request matches this value the rest of this Configuration will determine
      *the headers that are returned. If no Configuration is present for the Origin is not allowed.
      *
-     * @return string
+     * @return string[]
      */
-    public function getOrigin() : string;
+    public function getOrigins() : array;
 
     /**
      * Return the number of seconds that the browser should cache these cross-origin headers.

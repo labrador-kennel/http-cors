@@ -34,9 +34,13 @@ final class CorsMiddleware implements Middleware {
             /** @var Response $response */
             $response = yield $requestHandler->handleRequest($request);
 
-            $origin = $this->configuration->getOrigin();
-            if ($request->getHeader('Origin') === $origin || $origin === '*') {
-                $response->setHeader('Access-Control-Allow-Origin', $origin);
+            $origins = $this->configuration->getOrigins();
+            $hasWildCardOrigin = in_array('*', $origins, true);
+            $originHeader = $request->getHeader('Origin');
+            $originHeaderMatches = in_array($originHeader, $origins, true);
+            $originResponseHeader = $hasWildCardOrigin ? '*' : $originHeader;
+            if ($hasWildCardOrigin || $originHeaderMatches) {
+                $response->setHeader('Access-Control-Allow-Origin', $originResponseHeader);
                 $varyHeader = $response->getHeader('Vary');
                 $varyHeader = isset($varyHeader) ? $varyHeader . ', Origin' : 'Origin';
                 $response->setHeader('Vary', $varyHeader);
@@ -51,7 +55,7 @@ final class CorsMiddleware implements Middleware {
 
     private function handleOptionRequest(Request $request) : Response {
         $response = new Response();
-        $origin = $this->configuration->getOrigin();
+        $origins = $this->configuration->getOrigins();
         $corsMethod = $request->getHeader('Access-Control-Request-Method');
         $corsHeaders = $request->getHeader('Access-Control-Request-Headers');
         $corsHeaders = isset($corsHeaders) ? explode(',', $corsHeaders) : [];
@@ -60,12 +64,17 @@ final class CorsMiddleware implements Middleware {
         $badCorsHeaders = array_filter($corsHeaders, function($corsHeader) use($allowedHeaders) {
             return !in_array($corsHeader, $allowedHeaders);
         });
-        if (($origin !== '*' && $request->getHeader('Origin') !== $origin) || !empty($badCorsHeaders)) {
+        $originHeader = $request->getHeader('Origin');
+        $hasWildCardOrigin = in_array('*', $origins, true);
+        $originHeaderMatches = in_array($originHeader, $origins, true);
+        $originResponseHeader = $hasWildCardOrigin ? '*' : $originHeader;
+
+        if ((!$hasWildCardOrigin && !$originHeaderMatches) || !empty($badCorsHeaders)) {
             $response->setStatus(Status::FORBIDDEN);
         } else if (!in_array($corsMethod, $allowedMethods)) {
             $response->setStatus(Status::METHOD_NOT_ALLOWED);
         } else {
-            $response->setHeader('Access-Control-Allow-Origin', $origin);
+            $response->setHeader('Access-Control-Allow-Origin', $originResponseHeader);
             $response->setHeader('Access-Control-Allow-Methods', $this->turnArrayToHeaderString($allowedMethods));
             if (!empty($allowedHeaders)) {
                 $response->setHeader('Access-Control-Allow-Headers', $this->turnArrayToHeaderString($allowedHeaders));
