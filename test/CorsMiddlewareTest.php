@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Cspray\Labrador\Http\Cors\Test;
+namespace Cspray\Labrador\Http\Cors;
 
 use Amp\Http\Server\Driver\Client;
 use Amp\Http\Server\Request;
@@ -9,9 +9,6 @@ use Amp\Http\Server\Response;
 use Amp\Http\Status;
 use Amp\PHPUnit\AsyncTestCase;
 use Amp\Success;
-use Cspray\Labrador\Http\Cors\ArrayConfiguration;
-use Cspray\Labrador\Http\Cors\Configuration;
-use Cspray\Labrador\Http\Cors\CorsMiddleware;
 use League\Uri\Http;
 
 class CorsMiddlewareTest extends AsyncTestCase {
@@ -24,7 +21,7 @@ class CorsMiddlewareTest extends AsyncTestCase {
 
     private function configuration(array $overrides = []) : Configuration {
         return new ArrayConfiguration(array_merge([], [
-            'origin' => 'https://labrador.example.com',
+            'origins' => ['https://labrador.example.com'],
             'max_age' => 86400,
             'allowed_methods' => ['GET', 'POST', 'PUT', 'DELETE'],
             'allowed_headers' => ['X-Custom-Req-Header', 'Content-Type'],
@@ -151,9 +148,10 @@ class CorsMiddlewareTest extends AsyncTestCase {
         $mock->expects($this->never())
             ->method('handleRequest');
 
-        $middleware = new CorsMiddleware($this->configuration([
-            'origin' => '*'
-        ]));
+        $config = $this->configuration([
+            'origins' => ['*']
+        ]);
+        $middleware = new CorsMiddleware($config);
         $actualResponse = yield $middleware->handleRequest($request, $mock);
 
         $this->assertSame(Status::OK, $actualResponse->getStatus());
