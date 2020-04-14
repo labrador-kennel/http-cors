@@ -4,6 +4,11 @@
 
 **This release introduces breaking changes. Please review entries carefully when upgrading from a previous release.**
 
+#### Added
+
+- Added a `ConfigurationBuilder` to easily build a Configuration object using a type-safe mechanism as 
+opposed to the ArrayConfiguration instance.
+
 #### Changed
 
 - Changed the `Configuration::getMaxAge()` method to return `?int` because sometimes this value does 
