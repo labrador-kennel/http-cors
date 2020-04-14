@@ -59,7 +59,10 @@ class CorsMiddlewareTest extends AsyncTestCase {
         $actualResponse = yield $middleware->handleRequest($request, $mock);
 
         $this->assertSame(Status::OK, $actualResponse->getStatus());
-        $this->assertSame('https://labrador.example.com', $actualResponse->getHeader('Access-Control-Allow-Origin'));
+        $this->assertSame(
+            'https://labrador.example.com',
+            $actualResponse->getHeader('Access-Control-Allow-Origin')
+        );
         $this->assertSame('Origin', $actualResponse->getHeader('Vary'));
         $this->assertSame('true', $actualResponse->getHeader('Access-Control-Allow-Credentials'));
     }
@@ -130,9 +133,18 @@ class CorsMiddlewareTest extends AsyncTestCase {
         $actualResponse = yield $middleware->handleRequest($request, $mock);
 
         $this->assertSame(Status::OK, $actualResponse->getStatus());
-        $this->assertSame('https://labrador.example.com', $actualResponse->getHeader('Access-Control-Allow-Origin'));
-        $this->assertSame('GET, POST, PUT, DELETE', $actualResponse->getHeader('Access-Control-Allow-Methods'));
-        $this->assertSame('X-Custom-Req-Header, Content-Type', $actualResponse->getHeader('Access-Control-Allow-Headers'));
+        $this->assertSame(
+            'https://labrador.example.com',
+            $actualResponse->getHeader('Access-Control-Allow-Origin')
+        );
+        $this->assertSame(
+            'GET, POST, PUT, DELETE',
+            $actualResponse->getHeader('Access-Control-Allow-Methods')
+        );
+        $this->assertSame(
+            'X-Custom-Req-Header, Content-Type',
+            $actualResponse->getHeader('Access-Control-Allow-Headers')
+        );
         $this->assertSame('X-Custom-Res-Header', $actualResponse->getHeader('Access-Control-Expose-Headers'));
         $this->assertSame('true', $actualResponse->getHeader('Access-Control-Allow-Credentials'));
         $this->assertSame(86400, (int) $actualResponse->getHeader('Access-Control-Max-Age'));
@@ -157,8 +169,14 @@ class CorsMiddlewareTest extends AsyncTestCase {
 
         $this->assertSame(Status::OK, $actualResponse->getStatus());
         $this->assertSame('*', $actualResponse->getHeader('Access-Control-Allow-Origin'));
-        $this->assertSame('GET, POST, PUT, DELETE', $actualResponse->getHeader('Access-Control-Allow-Methods'));
-        $this->assertSame('X-Custom-Req-Header, Content-Type', $actualResponse->getHeader('Access-Control-Allow-Headers'));
+        $this->assertSame(
+            'GET, POST, PUT, DELETE',
+            $actualResponse->getHeader('Access-Control-Allow-Methods')
+        );
+        $this->assertSame(
+            'X-Custom-Req-Header, Content-Type',
+            $actualResponse->getHeader('Access-Control-Allow-Headers')
+        );
         $this->assertSame('X-Custom-Res-Header', $actualResponse->getHeader('Access-Control-Expose-Headers'));
         $this->assertSame('true', $actualResponse->getHeader('Access-Control-Allow-Credentials'));
         $this->assertSame(86400, (int) $actualResponse->getHeader('Access-Control-Max-Age'));
@@ -181,9 +199,15 @@ class CorsMiddlewareTest extends AsyncTestCase {
         $actualResponse = yield $middleware->handleRequest($request, $mock);
 
         $this->assertSame(Status::OK, $actualResponse->getStatus());
-        $this->assertSame('https://labrador.example.com', $actualResponse->getHeader('Access-Control-Allow-Origin'));
+        $this->assertSame(
+            'https://labrador.example.com',
+            $actualResponse->getHeader('Access-Control-Allow-Origin')
+        );
         $this->assertSame('GET, POST, PUT, DELETE', $actualResponse->getHeader('Access-Control-Allow-Methods'));
-        $this->assertSame('X-Custom-Req-Header, Content-Type', $actualResponse->getHeader('Access-Control-Allow-Headers'));
+        $this->assertSame(
+            'X-Custom-Req-Header, Content-Type',
+            $actualResponse->getHeader('Access-Control-Allow-Headers')
+        );
         $this->assertSame('X-Custom-Res-Header', $actualResponse->getHeader('Access-Control-Expose-Headers'));
         $this->assertNull($actualResponse->getHeader('Access-Control-Allow-Credentials'));
         $this->assertSame(86400, (int) $actualResponse->getHeader('Access-Control-Max-Age'));
@@ -205,7 +229,10 @@ class CorsMiddlewareTest extends AsyncTestCase {
         $actualResponse = yield $middleware->handleRequest($request, $mock);
 
         $this->assertSame(Status::OK, $actualResponse->getStatus());
-        $this->assertSame('https://labrador.example.com', $actualResponse->getHeader('Access-Control-Allow-Origin'));
+        $this->assertSame(
+            'https://labrador.example.com',
+            $actualResponse->getHeader('Access-Control-Allow-Origin')
+        );
         $this->assertSame('GET, POST, PUT, DELETE', $actualResponse->getHeader('Access-Control-Allow-Methods'));
         $this->assertNull($actualResponse->getHeader('Access-Control-Allow-Headers'));
         $this->assertSame('X-Custom-Res-Header', $actualResponse->getHeader('Access-Control-Expose-Headers'));
@@ -230,9 +257,15 @@ class CorsMiddlewareTest extends AsyncTestCase {
         $actualResponse = yield $middleware->handleRequest($request, $mock);
 
         $this->assertSame(Status::OK, $actualResponse->getStatus());
-        $this->assertSame('https://labrador.example.com', $actualResponse->getHeader('Access-Control-Allow-Origin'));
+        $this->assertSame(
+            'https://labrador.example.com',
+            $actualResponse->getHeader('Access-Control-Allow-Origin')
+        );
         $this->assertSame('GET, POST, PUT, DELETE', $actualResponse->getHeader('Access-Control-Allow-Methods'));
-        $this->assertSame('X-Custom-Req-Header, Content-Type', $actualResponse->getHeader('Access-Control-Allow-Headers'));
+        $this->assertSame(
+            'X-Custom-Req-Header, Content-Type',
+            $actualResponse->getHeader('Access-Control-Allow-Headers')
+        );
         $this->assertNull($actualResponse->getHeader('Access-Control-Expose-Headers'));
         $this->assertSame('true', $actualResponse->getHeader('Access-Control-Allow-Credentials'));
         $this->assertSame(86400, (int) $actualResponse->getHeader('Access-Control-Max-Age'));
@@ -293,7 +326,9 @@ class CorsMiddlewareTest extends AsyncTestCase {
         $mock->expects($this->never())
             ->method('handleRequest');
 
-        $middleware = new CorsMiddleware($this->configuration(['allowed_headers' => ['X-Not-Set-In-Options', 'Content-Type']]));
+        $middleware = new CorsMiddleware($this->configuration([
+            'allowed_headers' => ['X-Not-Set-In-Options', 'Content-Type']
+        ]));
         $actualResponse = yield $middleware->handleRequest($request, $mock);
 
         $this->assertSame(Status::FORBIDDEN, $actualResponse->getStatus());
@@ -317,12 +352,23 @@ class CorsMiddlewareTest extends AsyncTestCase {
         $actualResponse = yield $middleware->handleRequest($request, $mock);
 
         $this->assertSame(Status::OK, $actualResponse->getStatus());
-        $this->assertSame('https://labrador.example.com', $actualResponse->getHeader('Access-Control-Allow-Origin'));
-        $this->assertSame('GET, POST, PUT, DELETE', $actualResponse->getHeader('Access-Control-Allow-Methods'));
-        $this->assertSame('X-Custom-Req-Header, Content-Type', $actualResponse->getHeader('Access-Control-Allow-Headers'));
-        $this->assertSame('X-Custom-Res-Header', $actualResponse->getHeader('Access-Control-Expose-Headers'));
+        $this->assertSame(
+            'https://labrador.example.com',
+            $actualResponse->getHeader('Access-Control-Allow-Origin')
+        );
+        $this->assertSame(
+            'GET, POST, PUT, DELETE',
+            $actualResponse->getHeader('Access-Control-Allow-Methods')
+        );
+        $this->assertSame(
+            'X-Custom-Req-Header, Content-Type',
+            $actualResponse->getHeader('Access-Control-Allow-Headers')
+        );
+        $this->assertSame(
+            'X-Custom-Res-Header',
+            $actualResponse->getHeader('Access-Control-Expose-Headers')
+        );
         $this->assertSame('true', $actualResponse->getHeader('Access-Control-Allow-Credentials'));
         $this->assertFalse($actualResponse->hasHeader('Access-Control-Max-Age'));
     }
-
 }

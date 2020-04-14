@@ -2,6 +2,7 @@
   "name": "cspray/labrador-http-cors",
   "description": "An Amp http-server middleware library to facilitate CORS",
   "scripts": {
+    "cs": "vendor/bin/labrador-cs src/ test/",
     "test": "vendor/bin/phpunit"
   },
   "require": {
@@ -9,7 +10,8 @@
   },
   "require-dev": {
     "phpunit/phpunit": "^9.0",
-    "amphp/phpunit-util": "^1.3"
+    "amphp/phpunit-util": "^1.3",
+    "cspray/labrador-coding-standard": "0.2.0"
   },
   "autoload": {
     "psr-4": {

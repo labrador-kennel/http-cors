@@ -91,5 +91,4 @@ class ArrayConfigurationTest extends TestCase {
 
         $this->assertFalse($subject->shouldAllowCredentials());
     }
-
 }

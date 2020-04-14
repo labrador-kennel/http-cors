@@ -11,6 +11,11 @@ use Amp\Promise;
 
 use function Amp\call;
 
+/**
+ * An Amp http-server middleware that is responsible for handling CORS request.
+ *
+ * @package Cspray\Labrador\Http\Cors
+ */
 final class CorsMiddleware implements Middleware {
 
     private $configurationLoader;
@@ -20,6 +25,9 @@ final class CorsMiddleware implements Middleware {
     }
 
     /**
+     * Will handle all OPTIONS Requests based on the Configuration for the given Request and ensure all non-OPTIONS
+     * requests have appropriate CORS headers.
+     *
      * @param Request $request
      * @param RequestHandler $requestHandler
      *
@@ -33,8 +41,8 @@ final class CorsMiddleware implements Middleware {
 
             /** @var Response $response */
             $response = yield $requestHandler->handleRequest($request);
-            $configuration = $this->configurationLoader->loadConfiguration($request);
 
+            $configuration = $this->configurationLoader->loadConfiguration($request);
             $origins = $configuration->getOrigins();
             $hasWildCardOrigin = in_array('*', $origins, true);
             $originHeader = $request->getHeader('Origin');
@@ -73,18 +81,24 @@ final class CorsMiddleware implements Middleware {
 
         if ((!$hasWildCardOrigin && !$originHeaderMatches) || !empty($badCorsHeaders)) {
             $response->setStatus(Status::FORBIDDEN);
-        } else if (!in_array($corsMethod, $allowedMethods)) {
+        } elseif (!in_array($corsMethod, $allowedMethods)) {
             $response->setStatus(Status::METHOD_NOT_ALLOWED);
         } else {
             $response->setHeader('Access-Control-Allow-Origin', $originResponseHeader);
             $response->setHeader('Access-Control-Allow-Methods', $this->turnArrayToHeaderString($allowedMethods));
             if (!empty($allowedHeaders)) {
-                $response->setHeader('Access-Control-Allow-Headers', $this->turnArrayToHeaderString($allowedHeaders));
+                $response->setHeader(
+                    'Access-Control-Allow-Headers',
+                    $this->turnArrayToHeaderString($allowedHeaders)
+                );
             }
 
             $exposableHeaders = $configuration->getExposableHeaders();
             if (!empty($exposableHeaders)) {
-                $response->setHeader('Access-Control-Expose-Headers', $this->turnArrayToHeaderString($exposableHeaders));
+                $response->setHeader(
+                    'Access-Control-Expose-Headers',
+                    $this->turnArrayToHeaderString($exposableHeaders)
+                );
             }
 
             if ($configuration->shouldAllowCredentials()) {
