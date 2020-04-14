@@ -13,10 +13,10 @@ use function Amp\call;
 
 final class CorsMiddleware implements Middleware {
 
-    private $configuration;
+    private $configurationLoader;
 
-    public function __construct(Configuration $configuration) {
-        $this->configuration = $configuration;
+    public function __construct(ConfigurationLoader $configurationLoader) {
+        $this->configurationLoader = $configurationLoader;
     }
 
     /**
@@ -33,8 +33,9 @@ final class CorsMiddleware implements Middleware {
 
             /** @var Response $response */
             $response = yield $requestHandler->handleRequest($request);
+            $configuration = $this->configurationLoader->loadConfiguration($request);
 
-            $origins = $this->configuration->getOrigins();
+            $origins = $configuration->getOrigins();
             $hasWildCardOrigin = in_array('*', $origins, true);
             $originHeader = $request->getHeader('Origin');
             $originHeaderMatches = in_array($originHeader, $origins, true);
@@ -44,7 +45,7 @@ final class CorsMiddleware implements Middleware {
                 $varyHeader = $response->getHeader('Vary');
                 $varyHeader = isset($varyHeader) ? $varyHeader . ', Origin' : 'Origin';
                 $response->setHeader('Vary', $varyHeader);
-                if ($this->configuration->shouldAllowCredentials()) {
+                if ($configuration->shouldAllowCredentials()) {
                     $response->setHeader('Access-Control-Allow-Credentials', 'true');
                 }
             }
@@ -54,13 +55,14 @@ final class CorsMiddleware implements Middleware {
     }
 
     private function handleOptionRequest(Request $request) : Response {
+        $configuration = $this->configurationLoader->loadConfiguration($request);
         $response = new Response();
-        $origins = $this->configuration->getOrigins();
+        $origins = $configuration->getOrigins();
         $corsMethod = $request->getHeader('Access-Control-Request-Method');
         $corsHeaders = $request->getHeader('Access-Control-Request-Headers');
         $corsHeaders = isset($corsHeaders) ? explode(',', $corsHeaders) : [];
-        $allowedHeaders = $this->configuration->getAllowedHeaders();
-        $allowedMethods = $this->configuration->getAllowedMethods();
+        $allowedHeaders = $configuration->getAllowedHeaders();
+        $allowedMethods = $configuration->getAllowedMethods();
         $badCorsHeaders = array_filter($corsHeaders, function($corsHeader) use($allowedHeaders) {
             return !in_array($corsHeader, $allowedHeaders);
         });
@@ -80,18 +82,18 @@ final class CorsMiddleware implements Middleware {
                 $response->setHeader('Access-Control-Allow-Headers', $this->turnArrayToHeaderString($allowedHeaders));
             }
 
-            $exposableHeaders = $this->configuration->getExposableHeaders();
+            $exposableHeaders = $configuration->getExposableHeaders();
             if (!empty($exposableHeaders)) {
                 $response->setHeader('Access-Control-Expose-Headers', $this->turnArrayToHeaderString($exposableHeaders));
             }
 
-            if ($this->configuration->shouldAllowCredentials()) {
+            if ($configuration->shouldAllowCredentials()) {
                 $response->setHeader('Access-Control-Allow-Credentials', 'true');
             }
 
-            $maxAge = $this->configuration->getMaxAge();
+            $maxAge = $configuration->getMaxAge();
             if (isset($maxAge)) {
-                $response->setHeader('Access-Control-Max-Age', $this->configuration->getMaxAge());
+                $response->setHeader('Access-Control-Max-Age', $configuration->getMaxAge());
             }
         }
 

@@ -8,6 +8,7 @@
 
 - Added a `ConfigurationBuilder` to easily build a Configuration object using a type-safe mechanism as 
 opposed to the ArrayConfiguration instance.
+- Added a `ConfigurationLoader` that allows for the loading of a request-specific CORS configuration.
 
 #### Changed
 
@@ -15,9 +16,10 @@ opposed to the ArrayConfiguration instance.
 not need to be explicitly set and using the browser default is preferred.
 - Updates the ArrayConfiguration instance to handle when a key is not present and ensures that required 
 values are passed in the constructor.
-- Renamed `Configuration::getOrigin()` -> `Configuration::getOrigins()` and it now expects an array of 
+- **BC BREAK** Renamed `Configuration::getOrigin()` -> `Configuration::getOrigins()` and it now expects an array of 
 string instead of just one. The thought process being that the rules that apply to 1 Origin is likely to 
 apply to another.
+- **BC BREAK** Changed the `CorsMiddleware` instance to require a `ConfigurationLoader` instead of a `Configuration` instance.
 
 
 ## 0.2.1 - 2020-04-09

@@ -19,8 +19,8 @@ class CorsMiddlewareTest extends AsyncTestCase {
         return new Request($mock, $method, Http::createFromString($uri), $headers);
     }
 
-    private function configuration(array $overrides = []) : Configuration {
-        return new ArrayConfiguration(array_merge([], [
+    private function configuration(array $overrides = []) : ConfigurationLoader {
+        $configuration = new ArrayConfiguration(array_merge([], [
             'origins' => ['https://labrador.example.com'],
             'max_age' => 86400,
             'allowed_methods' => ['GET', 'POST', 'PUT', 'DELETE'],
@@ -28,6 +28,7 @@ class CorsMiddlewareTest extends AsyncTestCase {
             'exposable_headers' => ['X-Custom-Res-Header'],
             'allow_credentials' => true
         ], $overrides));
+        return new SimpleConfigurationLoader($configuration);
     }
 
     public function testNonOptionsRequestForwardedToRequestHandler() {
