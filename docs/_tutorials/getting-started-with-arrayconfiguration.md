@@ -9,7 +9,7 @@ Using `ArrayConfiguration` is as simple as providing an array to the constructor
 
 <script src="https://gist.github.com/cspray/df6d0f8c5565b591fa6db0c8f62e789d.js"></script>
 
-The only keys required are `origins` and `allowed_methods`, otherwise the corresponding CORS header will not be set if 
+The only key required is `origins`, otherwise the corresponding CORS header will not be set if 
 there are no values provided. Once you have the `CorsMiddleware` instantiated you can attach it to your http-server 
 router as appropriate for your application stack. If you are running [Labrador HTTP] you would attach this to the 
 `Application` directly if you'd like to handle CORS requests similarly for all routes. You also have the option to 

@@ -110,7 +110,8 @@ namespace Acme\Http\Cors;
 
 use Amp\Http\Server\Request;
 use Cspray\Labrador\Http\Cors\Configuration;
-use Cspray\Labrador\Http\Cors\ConfigurationBuilder;use Cspray\Labrador\Http\Cors\ConfigurationLoader;
+use Cspray\Labrador\Http\Cors\ConfigurationBuilder;
+use Cspray\Labrador\Http\Cors\ConfigurationLoader;
 
 final class MultiTenantConfigurationLoader implements ConfigurationLoader {
 
