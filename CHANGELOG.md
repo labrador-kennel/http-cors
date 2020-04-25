@@ -16,8 +16,10 @@ opposed to the ArrayConfiguration instance.
 not need to be explicitly set and using the browser default is preferred.
 - Updates the ArrayConfiguration instance to handle when a key is not present and ensures that required 
 values are passed in the constructor.
+- Changed the `CorsMiddleware` to only process non-OPTION requests if there is an Origin header present. This should 
+not be a BC break as if there was no Origin header in the Request it wouldn't add headers to the Response.
 - **BC BREAK** Renamed `Configuration::getOrigin()` -> `Configuration::getOrigins()` and it now expects an array of 
-string instead of just one. The thought process being that the rules that apply to 1 Origin is likely to 
+strings instead of just one. The thought process being that the rules that apply to 1 Origin is likely to 
 apply to another.
 - **BC BREAK** Changed the `CorsMiddleware` instance to require a `ConfigurationLoader` instead of a `Configuration` instance.
 
