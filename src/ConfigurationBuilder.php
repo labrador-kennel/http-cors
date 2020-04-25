@@ -4,6 +4,11 @@ namespace Cspray\Labrador\Http\Cors;
 
 use InvalidArgumentException;
 
+/**
+ * A fluent-API approach to building a Configuration implementation.
+ *
+ * @package Cspray\Labrador\Http\Cors
+ */
 class ConfigurationBuilder {
 
     private $origins;
@@ -56,7 +61,13 @@ class ConfigurationBuilder {
     }
 
     public function build() : Configuration {
-        return new class($this->origins, $this->methods, $this->maxAge, $this->allowedHeaders, $this->exposableHeaders, $this->allowCredentials) implements Configuration {
+        return new class(
+            $this->origins,
+            $this->methods,
+            $this->maxAge,
+            $this->allowedHeaders,
+            $this->exposableHeaders,
+            $this->allowCredentials) implements Configuration {
             private $origins;
             private $methods;
             private $maxAge;
@@ -64,7 +75,14 @@ class ConfigurationBuilder {
             private $exposableHeaders;
             private $allowCredentials;
 
-            public function __construct(array $origins, array $methods, ?int $maxAge, array $allowedHeaders, array $exposableHeaders, bool $allowCredentials) {
+            public function __construct(
+                array $origins,
+                array $methods,
+                ?int $maxAge,
+                array $allowedHeaders,
+                array $exposableHeaders,
+                bool $allowCredentials
+            ) {
                 $this->origins = $origins;
                 $this->methods = $methods;
                 $this->maxAge = $maxAge;
@@ -116,5 +134,4 @@ class ConfigurationBuilder {
             }
         };
     }
-
 }

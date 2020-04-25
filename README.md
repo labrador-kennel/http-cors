@@ -6,48 +6,39 @@ one dependency, `amphp/http-server`, and does not depend on any other Labrador p
 
 ## Installation
 
-There is only 1 supported method for installing Labrador packages; [Composer].
+We only support installing Labrador packages via [Composer].
 
 ```
 composer require cspray/labrador-http-cors
 ```
 
-## Usage
+## Documentation
 
-Using the Middleware is fairly simple; provide a `Configuration` instance that defines the 
-CORS related data for a given Origin. Pass that config to a `CorsMiddleware` instance and then 
-attach to the router layer you've implemented for your amphp application.
+This package has thorough, in-repo documentation that can be found in the `docs/` directory. You 
+can also find documentation online at https://labrador-kennel.io/http-cors. 
 
-```php
-<?php
+The documenation is split into the following sections:
 
-require_once  __DIR__ . '/vendor/autoload.php';
+- "Tutorials" (Located in `docs/_tutorials`)
+    
+    Details how to get started with the library. If you're looking to get started quickly this 
+    is probably where you want to be
+    
+- "How Tos" (Located in `docs/_how-tos`)
 
-use Cspray\Labrador\Http\Cors\ArrayConfiguration;
-use Cspray\Labrador\Http\Cors\CorsMiddleware;
+    Details how to perform specific tasks that can be completed with the library. Generally these 
+    are step by step guides with more explanation on how everything interacts and works together.
+    
+- "References" (Located in `docs/_references`)
 
-$config = new ArrayConfiguration([
-    'origin' => 'https://allowed-domain.example.com',
-    'allowed_methods' => ['GET', 'POST', 'PUT', 'DELETE'],
-    'allowed_headers' => ['Content-Type', 'X-Request-Header'],
-    'exposable_headers' => ['X-Response-Header'],
-    'allow_credentials' => true
-]);
-$middleware = new CorsMiddleware($config);
+    Details explicitly technical information about the library. This is where highly detailed 
+    explanations of the nuts and bolts of the library can be found. Some sufficiently simple 
+    libraries may not have reference documentation.
 
-// Attaching to your routing layer is an exercise left to the reader
+## Governance
 
-// In Labrador applications you would typically attach this directly on the Application
-// to catch preflight requests at all endpoints. Obviously if your solution requires 
-// more find-grained handling you can always add the Middleware to a specific route on
-// your Router instance.
-```
-
-## Security Issues
-
-This library aims to be well tested and spec-compliant. If you encounter a security issue 
-with this library please email cspray+security@gmail.com instead of posting an issue directly 
-on this repository.
+All Labrador packages adhere to the rules laid out in the [Labrador Governance repo]
 
 [amphp http-server]: https://amphp.org/http-server/
 [Composer]: https://getcomposer.org
+[Labrador Governance repo]: https://github.com/labrador-kennel/governance

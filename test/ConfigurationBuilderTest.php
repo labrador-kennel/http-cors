@@ -55,5 +55,4 @@ class ConfigurationBuilderTest extends TestCase {
         $this->assertNull($configuration->getMaxAge());
         $this->assertFalse($configuration->shouldAllowCredentials());
     }
-
 }

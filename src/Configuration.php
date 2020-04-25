@@ -2,22 +2,28 @@
 
 namespace Cspray\Labrador\Http\Cors;
 
+/**
+ * Determines how CORS requests should be handled for a given set of Origin.
+ *
+ * @package Cspray\Labrador\Http\Cors
+ */
 interface Configuration {
 
     /**
-     * Return the Origin that this CORS Configuration is valid for.
+     * Return a set of Origin that this CORS Configuration is valid for.
      *
-     * If the Origin header in the OPTIONS request matches this value the rest of this Configuration will determine
-     *the headers that are returned. If no Configuration is present for the Origin is not allowed.
+     * If the Origin header in the OPTIONS request matches a value in the set the rest of this Configuration will
+     * determine Response headers. If no Configuration is present for the Origin the Request is not allowed.
      *
      * @return string[]
      */
     public function getOrigins() : array;
 
     /**
-     * Return the number of seconds that the browser should cache these cross-origin headers.
+     * Return the number of seconds that the browser should cache CORS headers or return null to not return a max age
+     * header.
      *
-     * @return int
+     * @return int|null
      */
     public function getMaxAge() : ?int;
 
@@ -29,9 +35,9 @@ interface Configuration {
     public function getAllowedMethods() : array;
 
     /**
-     * Return the HTTP headers that a Request is allowed to send cross-origin..
+     * Return the HTTP headers that a Request is allowed to send cross-origin.
      *
-     * @return array
+     * @return string[]
      */
     public function getAllowedHeaders() : array;
 
@@ -49,5 +55,4 @@ interface Configuration {
      * @return bool
      */
     public function shouldAllowCredentials() : bool;
-
 }
