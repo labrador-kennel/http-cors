@@ -7,7 +7,7 @@ use InvalidArgumentException;
 class ConfigurationBuilder {
 
     private $origins;
-    private $methods;
+    private $methods = [];
     private $allowedHeaders = [];
     private $exposableHeaders = [];
     private $maxAge;
@@ -56,9 +56,6 @@ class ConfigurationBuilder {
     }
 
     public function build() : Configuration {
-        if (empty($this->methods)) {
-            throw new InvalidArgumentException('At least one HTTP method must be provided when building a Configuration');
-        }
         return new class($this->origins, $this->methods, $this->maxAge, $this->allowedHeaders, $this->exposableHeaders, $this->allowCredentials) implements Configuration {
             private $origins;
             private $methods;

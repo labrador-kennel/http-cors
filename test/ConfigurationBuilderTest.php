@@ -13,14 +13,6 @@ class ConfigurationBuilderTest extends TestCase {
         ConfigurationBuilder::forOrigins();
     }
 
-    public function testNoMethodsThrowsError() {
-        $builder = ConfigurationBuilder::forOrigins('https://example.com')->allowMethods();
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('At least one HTTP method must be provided when building a Configuration');
-
-        $builder->build();
-    }
-
     public function testBuildCompleteConfiguration() {
         $configuration = ConfigurationBuilder::forOrigins('https://example.com')
             ->allowMethods('GET', 'POST', 'DELETE')
@@ -39,12 +31,10 @@ class ConfigurationBuilderTest extends TestCase {
     }
 
     public function testBuildMinimalConfigurationWithDefaultValues() {
-        $configuration = ConfigurationBuilder::forOrigins('https://example.com', 'https://foo.com')
-            ->allowMethods('GET', 'POST', 'DELETE')
-            ->build();
+        $configuration = ConfigurationBuilder::forOrigins('https://example.com', 'https://foo.com')->build();
 
         $this->assertSame(['https://example.com', 'https://foo.com'], $configuration->getOrigins());
-        $this->assertSame(['GET', 'POST', 'DELETE'], $configuration->getAllowedMethods());
+        $this->assertSame([], $configuration->getAllowedMethods());
         $this->assertSame([], $configuration->getAllowedHeaders());
         $this->assertSame([], $configuration->getExposableHeaders());
         $this->assertNull($configuration->getMaxAge());

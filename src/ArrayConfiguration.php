@@ -4,7 +4,7 @@ namespace Cspray\Labrador\Http\Cors;
 
 final class ArrayConfiguration implements Configuration {
 
-    private const REQUIRED_KEYS = ['origins', 'allowed_methods'];
+    private const REQUIRED_KEYS = ['origins'];
 
     private $configuration;
 
@@ -54,7 +54,7 @@ final class ArrayConfiguration implements Configuration {
      * @return string[]
      */
     public function getAllowedMethods() : array {
-        return $this->configuration['allowed_methods'];
+        return $this->configuration['allowed_methods'] ?? [];
     }
 
     /**
