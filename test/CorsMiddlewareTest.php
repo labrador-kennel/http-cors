@@ -148,8 +148,6 @@ class CorsMiddlewareTest extends AsyncTestCase {
     public function testNonOptionRequestRespectsWildcardOrigin() {
         $request = $this->createRequest('POST', '/some/path', [
             'Origin' => 'https://' . md5(random_bytes(8)) . '.example.com',
-            'Access-Control-Request-Method' => 'POST',
-            'Access-Control-Request-Headers' => 'X-Custom-Req-Header'
         ]);
         $mock = $this->createMock(RequestHandler::class);
         $response = new Response();
@@ -170,9 +168,63 @@ class CorsMiddlewareTest extends AsyncTestCase {
         $this->assertSame('true', $actualResponse->getHeader('Access-Control-Allow-Credentials'));
     }
 
+    public function testNonOptionRequestOriginCheckIsCaseInsensitive() {
+        $request = $this->createRequest('POST', '/some/path', [
+            'Origin' => 'https://LABRADOR.example.com',
+        ]);
+        $mock = $this->createMock(RequestHandler::class);
+        $response = new Response();
+
+        $mock->expects($this->once())
+            ->method('handleRequest')
+            ->with($request)
+            ->willReturn(new Success($response));
+
+        $config = $this->configuration();
+        $middleware = new CorsMiddleware($config);
+        $actualResponse = yield $middleware->handleRequest($request, $mock);
+
+        $this->assertSame(Status::OK, $actualResponse->getStatus());
+        $this->assertSame(
+            'https://labrador.example.com', $actualResponse->getHeader('Access-Control-Allow-Origin'));
+        $this->assertSame('true', $actualResponse->getHeader('Access-Control-Allow-Credentials'));
+    }
+
     public function testOptionRequestWithCorrectOriginHasAllHeaders() {
         $request = $this->createRequest('OPTIONS', '/some/path', [
             'Origin' => 'https://labrador.example.com',
+            'Access-Control-Request-Method' => 'POST',
+            'Access-Control-Request-Headers' => 'X-Custom-Req-Header'
+        ]);
+        $mock = $this->createMock(RequestHandler::class);
+
+        $mock->expects($this->never())
+            ->method('handleRequest');
+
+        $middleware = new CorsMiddleware($this->configuration());
+        $actualResponse = yield $middleware->handleRequest($request, $mock);
+
+        $this->assertSame(Status::OK, $actualResponse->getStatus());
+        $this->assertSame(
+            'https://labrador.example.com',
+            $actualResponse->getHeader('Access-Control-Allow-Origin')
+        );
+        $this->assertSame(
+            'GET, POST, PUT, DELETE',
+            $actualResponse->getHeader('Access-Control-Allow-Methods')
+        );
+        $this->assertSame(
+            'X-Custom-Req-Header, Content-Type',
+            $actualResponse->getHeader('Access-Control-Allow-Headers')
+        );
+        $this->assertSame('X-Custom-Res-Header', $actualResponse->getHeader('Access-Control-Expose-Headers'));
+        $this->assertSame('true', $actualResponse->getHeader('Access-Control-Allow-Credentials'));
+        $this->assertSame(86400, (int) $actualResponse->getHeader('Access-Control-Max-Age'));
+    }
+
+    public function testOptionRequestOriginHeaderCaseInsensitive() {
+        $request = $this->createRequest('OPTIONS', '/some/path', [
+            'Origin' => 'https://LABRADOR.example.com',
             'Access-Control-Request-Method' => 'POST',
             'Access-Control-Request-Headers' => 'X-Custom-Req-Header'
         ]);
@@ -234,6 +286,38 @@ class CorsMiddlewareTest extends AsyncTestCase {
         $this->assertSame(86400, (int) $actualResponse->getHeader('Access-Control-Max-Age'));
     }
 
+
+    public function testOptionRequestAllowedHeadersCaseInsensitive() {
+        $request = $this->createRequest('OPTIONS', '/some/path', [
+            'Origin' => 'https://' . md5(random_bytes(8)) . '.example.com',
+            'Access-Control-Request-Method' => 'POST',
+            'Access-Control-Request-Headers' => 'X-CUSTOM-REQ-HEADER'
+        ]);
+        $mock = $this->createMock(RequestHandler::class);
+
+        $mock->expects($this->never())
+            ->method('handleRequest');
+
+        $config = $this->configuration([
+            'origins' => ['*']
+        ]);
+        $middleware = new CorsMiddleware($config);
+        $actualResponse = yield $middleware->handleRequest($request, $mock);
+
+        $this->assertSame(Status::OK, $actualResponse->getStatus());
+        $this->assertSame('*', $actualResponse->getHeader('Access-Control-Allow-Origin'));
+        $this->assertSame(
+            'GET, POST, PUT, DELETE',
+            $actualResponse->getHeader('Access-Control-Allow-Methods')
+        );
+        $this->assertSame(
+            'X-Custom-Req-Header, Content-Type',
+            $actualResponse->getHeader('Access-Control-Allow-Headers')
+        );
+        $this->assertSame('X-Custom-Res-Header', $actualResponse->getHeader('Access-Control-Expose-Headers'));
+        $this->assertSame('true', $actualResponse->getHeader('Access-Control-Allow-Credentials'));
+        $this->assertSame(86400, (int) $actualResponse->getHeader('Access-Control-Max-Age'));
+    }
     public function testOptionRequestRespectsAllowCredentialsFlag() {
         $request = $this->createRequest('OPTIONS', '/some/path', [
             'Origin' => 'https://labrador.example.com',
