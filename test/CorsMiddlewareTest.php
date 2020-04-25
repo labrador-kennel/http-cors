@@ -10,6 +10,7 @@ use Amp\Http\Status;
 use Amp\PHPUnit\AsyncTestCase;
 use Amp\Success;
 use League\Uri\Http;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class CorsMiddlewareTest extends AsyncTestCase {
 
@@ -29,6 +30,32 @@ class CorsMiddlewareTest extends AsyncTestCase {
             'allow_credentials' => true
         ], $overrides));
         return new SimpleConfigurationLoader($configuration);
+    }
+
+    public function testNonOptionsRequestWithNoOriginDoesNotLoadConfiguration() {
+        $request = new Request(
+            $this->createMock(Client::class),
+            'GET',
+            Http::createFromString('https://example.com')
+        );
+
+        /** @var MockObject|ConfigurationLoader $loader */
+        $loader = $this->getMockBuilder(ConfigurationLoader::class)->getMock();
+        $loader->expects($this->never())->method('loadConfiguration');
+
+        /** @var MockObject|RequestHandler $requestHandler */
+        $requestHandler = $this->getMockBuilder(RequestHandler::class)->getMock();
+        $requestHandler->expects($this->once())
+            ->method('handleRequest')
+            ->with($request)
+            ->willReturn(new Success(new Response()));
+
+        $subject = new CorsMiddleware($loader);
+
+        /** @var Response $response */
+        $response = yield $subject->handleRequest($request, $requestHandler);
+
+        $this->assertFalse($response->hasHeader('Access-Control-Allow-Origin'));
     }
 
     public function testNonOptionsRequestForwardedToRequestHandler() {

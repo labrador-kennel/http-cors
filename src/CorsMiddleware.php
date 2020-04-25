@@ -42,19 +42,21 @@ final class CorsMiddleware implements Middleware {
             /** @var Response $response */
             $response = yield $requestHandler->handleRequest($request);
 
-            $configuration = $this->configurationLoader->loadConfiguration($request);
-            $origins = $configuration->getOrigins();
-            $hasWildCardOrigin = in_array('*', $origins, true);
-            $originHeader = $request->getHeader('Origin');
-            $originHeaderMatches = in_array($originHeader, $origins, true);
-            $originResponseHeader = $hasWildCardOrigin ? '*' : $originHeader;
-            if ($hasWildCardOrigin || $originHeaderMatches) {
-                $response->setHeader('Access-Control-Allow-Origin', $originResponseHeader);
-                $varyHeader = $response->getHeader('Vary');
-                $varyHeader = isset($varyHeader) ? $varyHeader . ', Origin' : 'Origin';
-                $response->setHeader('Vary', $varyHeader);
-                if ($configuration->shouldAllowCredentials()) {
-                    $response->setHeader('Access-Control-Allow-Credentials', 'true');
+            if ($request->hasHeader('Origin')) {
+                $configuration = $this->configurationLoader->loadConfiguration($request);
+                $origins = $configuration->getOrigins();
+                $hasWildCardOrigin = in_array('*', $origins, true);
+                $originHeader = $request->getHeader('Origin');
+                $originHeaderMatches = in_array($originHeader, $origins, true);
+                $originResponseHeader = $hasWildCardOrigin ? '*' : $originHeader;
+                if ($hasWildCardOrigin || $originHeaderMatches) {
+                    $response->setHeader('Access-Control-Allow-Origin', $originResponseHeader);
+                    $varyHeader = $response->getHeader('Vary');
+                    $varyHeader = isset($varyHeader) ? $varyHeader . ', Origin' : 'Origin';
+                    $response->setHeader('Vary', $varyHeader);
+                    if ($configuration->shouldAllowCredentials()) {
+                        $response->setHeader('Access-Control-Allow-Credentials', 'true');
+                    }
                 }
             }
 
