@@ -23,6 +23,9 @@ strings instead of just one. The thought process being that the rules that apply
 apply to another.
 - **BC BREAK** Changed the `CorsMiddleware` instance to require a `ConfigurationLoader` instead of a `Configuration` instance.
 
+#### Fixed
+
+- Fixed the `CorsMiddleware` to handle case-insensitive Origin and allowed header checks.
 
 ## 0.2.1 - 2020-04-09
 

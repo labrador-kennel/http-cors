@@ -44,12 +44,8 @@ final class CorsMiddleware implements Middleware {
 
             if ($request->hasHeader('Origin')) {
                 $configuration = $this->configurationLoader->loadConfiguration($request);
-                $origins = $configuration->getOrigins();
-                $hasWildCardOrigin = in_array('*', $origins, true);
-                $originHeader = $request->getHeader('Origin');
-                $originHeaderMatches = in_array($originHeader, $origins, true);
-                $originResponseHeader = $hasWildCardOrigin ? '*' : $originHeader;
-                if ($hasWildCardOrigin || $originHeaderMatches) {
+                if ($this->doesOriginHeaderMatch($request, $configuration)) {
+                    $originResponseHeader = $this->getOriginResponseHeader($request, $configuration);
                     $response->setHeader('Access-Control-Allow-Origin', $originResponseHeader);
                     $varyHeader = $response->getHeader('Vary');
                     $varyHeader = isset($varyHeader) ? $varyHeader . ', Origin' : 'Origin';
@@ -67,25 +63,22 @@ final class CorsMiddleware implements Middleware {
     private function handleOptionRequest(Request $request) : Response {
         $configuration = $this->configurationLoader->loadConfiguration($request);
         $response = new Response();
-        $origins = $configuration->getOrigins();
         $corsMethod = $request->getHeader('Access-Control-Request-Method');
         $corsHeaders = $request->getHeader('Access-Control-Request-Headers');
         $corsHeaders = isset($corsHeaders) ? explode(',', $corsHeaders) : [];
         $allowedHeaders = $configuration->getAllowedHeaders();
         $allowedMethods = $configuration->getAllowedMethods();
-        $badCorsHeaders = array_filter($corsHeaders, function($corsHeader) use($allowedHeaders) {
-            return !in_array($corsHeader, $allowedHeaders);
+        $normalizedAllowedHeaders = array_map('strtolower', $allowedHeaders);
+        $badCorsHeaders = array_filter($corsHeaders, function($corsHeader) use($normalizedAllowedHeaders) {
+            return !in_array(strtolower($corsHeader), $normalizedAllowedHeaders, true);
         });
-        $originHeader = $request->getHeader('Origin');
-        $hasWildCardOrigin = in_array('*', $origins, true);
-        $originHeaderMatches = in_array($originHeader, $origins, true);
-        $originResponseHeader = $hasWildCardOrigin ? '*' : $originHeader;
 
-        if ((!$hasWildCardOrigin && !$originHeaderMatches) || !empty($badCorsHeaders)) {
+        if (!$this->doesOriginHeaderMatch($request, $configuration) || !empty($badCorsHeaders)) {
             $response->setStatus(Status::FORBIDDEN);
         } elseif (!in_array($corsMethod, $allowedMethods)) {
             $response->setStatus(Status::METHOD_NOT_ALLOWED);
         } else {
+            $originResponseHeader = $this->getOriginResponseHeader($request, $configuration);
             $response->setHeader('Access-Control-Allow-Origin', $originResponseHeader);
             $response->setHeader('Access-Control-Allow-Methods', $this->turnArrayToHeaderString($allowedMethods));
             if (!empty($allowedHeaders)) {
@@ -114,6 +107,25 @@ final class CorsMiddleware implements Middleware {
         }
 
         return $response;
+    }
+
+    private function doesOriginHeaderMatch(Request $request, Configuration $configuration) : bool {
+        $origins = $configuration->getOrigins();
+        $hasWildCardOrigin = in_array('*', $origins, true);
+        if ($hasWildCardOrigin) {
+            return true;
+        }
+
+        $originHeader = strtolower($request->getHeader('Origin'));
+        $normalizedOrigins = array_map('strtolower', $origins);
+        return in_array($originHeader, $normalizedOrigins, true);
+    }
+
+
+    private function getOriginResponseHeader(Request $request, Configuration $configuration) : string {
+        $origins = $configuration->getOrigins();
+        $hasWildCardOrigin = in_array('*', $origins, true);
+        return $hasWildCardOrigin ? '*' : strtolower($request->getHeader('Origin'));
     }
 
     private function turnArrayToHeaderString(array $headers) : string {
