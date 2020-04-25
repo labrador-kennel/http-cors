@@ -186,7 +186,9 @@ class CorsMiddlewareTest extends AsyncTestCase {
 
         $this->assertSame(Status::OK, $actualResponse->getStatus());
         $this->assertSame(
-            'https://labrador.example.com', $actualResponse->getHeader('Access-Control-Allow-Origin'));
+            'https://labrador.example.com',
+            $actualResponse->getHeader('Access-Control-Allow-Origin')
+        );
         $this->assertSame('true', $actualResponse->getHeader('Access-Control-Allow-Credentials'));
     }
 

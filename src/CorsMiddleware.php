@@ -54,7 +54,6 @@ final class CorsMiddleware implements Middleware {
                         $response->setHeader('Access-Control-Allow-Credentials', 'true');
                     }
                 }
-
             }
 
             return $response;
