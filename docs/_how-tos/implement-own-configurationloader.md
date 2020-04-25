@@ -110,7 +110,7 @@ namespace Acme\Http\Cors;
 
 use Amp\Http\Server\Request;
 use Cspray\Labrador\Http\Cors\Configuration;
-use Cspray\Labrador\Http\Cors\ConfigurationLoader;
+use Cspray\Labrador\Http\Cors\ConfigurationBuilder;use Cspray\Labrador\Http\Cors\ConfigurationLoader;
 
 final class MultiTenantConfigurationLoader implements ConfigurationLoader {
 
@@ -123,10 +123,10 @@ final class MultiTenantConfigurationLoader implements ConfigurationLoader {
     public function loadConfiguration(Request $request) : Configuration {
         $host = $request->getUri()->getHost();
         $configuration = $this->tenantConfigs[$host] ?? null;
-
         if ($configuration === null) {
-            // TODO show default configuration creation
-        }   
+            $origin = $request->getHeader('Origin');
+            $configuration = ConfigurationBuilder::forOrigins($origin)->build();
+        }
         return $configuration;
     }
 
