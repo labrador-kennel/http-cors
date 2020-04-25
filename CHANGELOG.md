@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.3.0 - 2020-??-??
+## 0.3.0 - 2020-04-25
 
 **This release introduces breaking changes. Please review entries carefully when upgrading from a previous release.**
 
