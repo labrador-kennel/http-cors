@@ -7,7 +7,25 @@ for you.
 
 Using `ArrayConfiguration` is as simple as providing an array to the constructor with all of your configuration values.
 
-<script src="https://gist.github.com/cspray/df6d0f8c5565b591fa6db0c8f62e789d.js"></script>
+```php
+<?php
+
+use Cspray\Labrador\Http\Cors\ArrayConfiguration;
+use Cspray\Labrador\Http\Cors\SimpleConfigurationLoader;
+use Cspray\Labrador\Http\Cors\CorsMiddleware;
+
+$arrayConfig = [
+    'origins' => ['https://example.com'],
+    'allowed_methods' => ['GET', 'POST', 'PUT'],
+    'max_age' => 8600,
+    'allowed_headers' => ['X-Request-Headers'],
+    'exposable_headers' => ['X-Response-Headers'],
+    'allow_credentials' => false
+];
+$config = new ArrayConfiguration($arrayConfig);
+$loader = new SimpleConfigurationLoader($config);
+$middleware = new CorsMiddleware($loader);
+```
 
 The only key required is `origins`, otherwise the corresponding CORS header will not be set if 
 there are no values provided. Once you have the `CorsMiddleware` instantiated you can attach it to your http-server 
