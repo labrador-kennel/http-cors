@@ -1,6 +1,5 @@
----
-title: Getting Started with ArrayConfiguration
----
+# Getting Started with ArrayConfiguration
+
 Start off using CORS Middleware with a CORS Configuration represented by an array. If you already have a CORS
 configuration represented as an array or can't store your configuration as PHP code this might be the implementation
 for you.

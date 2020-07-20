@@ -1,6 +1,5 @@
----
-title: Getting Started with ConfigurationBuilder
----
+# Getting Started with ConfigurationBuilder
+
 Start off using CORS Middleware by using a fluent, type-safe API to generate your Configuration instance. If you can
 store your configuration as PHP code this is the recommended way to create Configuration instances out-of-the-box.
 
