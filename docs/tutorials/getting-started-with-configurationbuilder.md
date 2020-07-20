@@ -27,8 +27,6 @@ $middleware = new CorsMiddleware($loader);
 
 The only method call required is `forOrigins`, otherwise the corresponding CORS header will not be set if 
 there are no values provided. Once you have the `CorsMiddleware` instantiated you can attach it to your http-server 
-router as appropriate for your application stack. If you are running [Labrador HTTP] you would attach this to the 
-`Application` directly if you'd like to handle CORS requests similarly for all routes. You also have the option to 
-attach this Middleware to a specific route or group of routes.
-
-[Labrador HTTP]: https://github.com/labrador-kennel/http
+router as appropriate for your application stack. If you are running [Labrador HTTP](https://github.com/labrador-kennel/http) 
+you would attach this to the `Application` directly if you'd like to handle CORS requests similarly for all routes. You 
+also have the option to attach this Middleware to a specific route or group of routes.

@@ -1,10 +1,10 @@
-name: PHP Composer
+name: 'PHP Unit Testing & Code Lint'
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
 
 jobs:
   build:
@@ -24,4 +24,4 @@ jobs:
       run: composer run-script test
 
     - name: Run code sniffer
-      run: composer run-script cs
+      run: composer run-script code-lint

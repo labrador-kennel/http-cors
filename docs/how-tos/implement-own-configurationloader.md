@@ -1,6 +1,5 @@
----
-title: Implement your own ConfigurationLoader
----
+# Implement your own ConfigurationLoader
+
 Out-of-the-box this library provides a single `ConfigurationLoader` that will always return a single Configuration
 for all requests. If you need something more complex this guide details how to create your own `ConfigurationLoader`
 instance.
