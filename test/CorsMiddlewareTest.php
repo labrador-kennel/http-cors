@@ -382,7 +382,7 @@ class CorsMiddlewareTest extends AsyncTestCase {
         $request = $this->createRequest('OPTIONS', '/some/path', [
             'Origin' => 'https://labrador.example.com',
             'Access-Control-Request-Method' => 'POST',
-            'Access-Control-Request-Headers' => 'X-Custom-Req-Header'
+            'Access-Control-Request-Headers' => 'X-Custom-Req-Header, Content-Type'
         ]);
         $mock = $this->createMock(RequestHandler::class);
 

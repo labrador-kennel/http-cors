@@ -66,6 +66,7 @@ final class CorsMiddleware implements Middleware {
         $corsMethod = $request->getHeader('Access-Control-Request-Method');
         $corsHeaders = $request->getHeader('Access-Control-Request-Headers');
         $corsHeaders = isset($corsHeaders) ? explode(',', $corsHeaders) : [];
+        $corsHeaders = array_map('trim', $corsHeaders);
         $allowedHeaders = $configuration->getAllowedHeaders();
         $allowedMethods = $configuration->getAllowedMethods();
         $normalizedAllowedHeaders = array_map('strtolower', $allowedHeaders);
