@@ -1,16 +1,22 @@
 # Changelog
 
+## 0.3.1 - 2021-06-17
+
+### Fixed
+
+- Ensures CORs header values separated by comma have the appropriate trailing and leading whitespace trimmed away. 
+
 ## 0.3.0 - 2020-04-25
 
 **This release introduces breaking changes. Please review entries carefully when upgrading from a previous release.**
 
-#### Added
+### Added
 
 - Added a `ConfigurationBuilder` to easily build a Configuration object using a type-safe mechanism as 
 opposed to the ArrayConfiguration instance.
 - Added a `ConfigurationLoader` that allows for the loading of a request-specific CORS configuration.
 
-#### Changed
+### Changed
 
 - Changed the `Configuration::getMaxAge()` method to return `?int` because sometimes this value does 
 not need to be explicitly set and using the browser default is preferred.
@@ -23,27 +29,27 @@ strings instead of just one. The thought process being that the rules that apply
 apply to another.
 - **BC BREAK** Changed the `CorsMiddleware` instance to require a `ConfigurationLoader` instead of a `Configuration` instance.
 
-#### Fixed
+### Fixed
 
 - Fixed the `CorsMiddleware` to handle case-insensitive Origin and allowed header checks.
 
 ## 0.2.1 - 2020-04-09
 
-#### Fixed
+### Fixed
 
 - Fixes a bug where a wildcard origin `*` was not being properly respected in some 
 circumstances.
 
 ## 0.2.0 - 2020-03-27
 
-#### Changed
+### Changed
 
 - Updated dependencies to allow for Amp http-server 2.0+
 - Other administrative tasks related to maintenance of the codebase
 
 ## 0.1.0 - 2019-02-09
 
-#### Added
+### Added
 
 - Adds a `Configuration` interface defining the data necessary to respond to CORS requests 
 correctly.
