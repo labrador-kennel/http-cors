@@ -20,7 +20,7 @@ jobs:
       - name: PHP 7 tests
         uses: php-actions/phpunit@v2
         with:
-          version: 8
+          version: 9
           php_version: 7
 
       - name: Composer 8
@@ -30,7 +30,7 @@ jobs:
       - name: PHP 8 tests
         uses: php-actions/phpunit@v2
         with:
-          version: 8
+          version: 9
           php_version: 8
 
       - name: Run code sniffer
