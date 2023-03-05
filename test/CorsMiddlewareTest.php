@@ -2,13 +2,12 @@
 
 namespace Cspray\Labrador\Http\Cors;
 
+use Amp\Http\HttpStatus;
 use Amp\Http\Server\Driver\Client;
 use Amp\Http\Server\Request;
 use Amp\Http\Server\RequestHandler;
 use Amp\Http\Server\Response;
-use Amp\Http\Status;
 use Amp\PHPUnit\AsyncTestCase;
-use Amp\Success;
 use League\Uri\Http;
 use PHPUnit\Framework\MockObject\MockObject;
 
@@ -48,12 +47,12 @@ class CorsMiddlewareTest extends AsyncTestCase {
         $requestHandler->expects($this->once())
             ->method('handleRequest')
             ->with($request)
-            ->willReturn(new Success(new Response()));
+            ->willReturn(new Response());
 
         $subject = new CorsMiddleware($loader);
 
         /** @var Response $response */
-        $response = yield $subject->handleRequest($request, $requestHandler);
+        $response = $subject->handleRequest($request, $requestHandler);
 
         $this->assertFalse($response->hasHeader('Access-Control-Allow-Origin'));
     }
@@ -65,10 +64,10 @@ class CorsMiddlewareTest extends AsyncTestCase {
         $mock->expects($this->once())
             ->method('handleRequest')
             ->with($request)
-            ->willReturn(new Success($response));
+            ->willReturn($response);
 
         $middleware = new CorsMiddleware($this->configuration());
-        $actualResponse = yield $middleware->handleRequest($request, $mock);
+        $actualResponse = $middleware->handleRequest($request, $mock);
 
         $this->assertSame($response, $actualResponse);
     }
@@ -80,12 +79,12 @@ class CorsMiddlewareTest extends AsyncTestCase {
         $mock->expects($this->once())
             ->method('handleRequest')
             ->with($request)
-            ->willReturn(new Success($response));
+            ->willReturn($response);
 
         $middleware = new CorsMiddleware($this->configuration());
-        $actualResponse = yield $middleware->handleRequest($request, $mock);
+        $actualResponse = $middleware->handleRequest($request, $mock);
 
-        $this->assertSame(Status::OK, $actualResponse->getStatus());
+        $this->assertSame(HttpStatus::OK, $actualResponse->getStatus());
         $this->assertSame(
             'https://labrador.example.com',
             $actualResponse->getHeader('Access-Control-Allow-Origin')
@@ -101,12 +100,12 @@ class CorsMiddlewareTest extends AsyncTestCase {
         $mock->expects($this->once())
             ->method('handleRequest')
             ->with($request)
-            ->willReturn(new Success($response));
+            ->willReturn($response);
 
         $middleware = new CorsMiddleware($this->configuration([
             'allow_credentials' => false
         ]));
-        $actualResponse = yield $middleware->handleRequest($request, $mock);
+        $actualResponse = $middleware->handleRequest($request, $mock);
 
         $this->assertNull($actualResponse->getHeader('Access-Control-Allow-Credentials'));
     }
@@ -114,16 +113,16 @@ class CorsMiddlewareTest extends AsyncTestCase {
     public function testNonOptionsRequestRespectsExistingVaryHeader() {
         $request = $this->createRequest('GET', '/some/path');
         $mock = $this->createMock(RequestHandler::class);
-        $response = new Response(Status::OK, ['Vary' => 'Content-Type']);
+        $response = new Response(HttpStatus::OK, ['Vary' => 'Content-Type']);
         $mock->expects($this->once())
             ->method('handleRequest')
             ->with($request)
-            ->willReturn(new Success($response));
+            ->willReturn($response);
 
         $middleware = new CorsMiddleware($this->configuration([
             'allow_credentials' => false
         ]));
-        $actualResponse = yield $middleware->handleRequest($request, $mock);
+        $actualResponse = $middleware->handleRequest($request, $mock);
 
         $this->assertSame('Content-Type, Origin', $actualResponse->getHeader('Vary'));
     }
@@ -136,12 +135,12 @@ class CorsMiddlewareTest extends AsyncTestCase {
         $mock->expects($this->once())
             ->method('handleRequest')
             ->with($request)
-            ->willReturn(new Success($response));
+            ->willReturn($response);
 
         $middleware = new CorsMiddleware($this->configuration());
-        $actualResponse = yield $middleware->handleRequest($request, $mock);
+        $actualResponse = $middleware->handleRequest($request, $mock);
 
-        $this->assertSame(Status::OK, $actualResponse->getStatus());
+        $this->assertSame(HttpStatus::OK, $actualResponse->getStatus());
         $this->assertNull($actualResponse->getHeader('Access-Control-Allow-Origin'));
     }
 
@@ -155,15 +154,15 @@ class CorsMiddlewareTest extends AsyncTestCase {
         $mock->expects($this->once())
             ->method('handleRequest')
             ->with($request)
-            ->willReturn(new Success($response));
+            ->willReturn($response);
 
         $config = $this->configuration([
             'origins' => ['*']
         ]);
         $middleware = new CorsMiddleware($config);
-        $actualResponse = yield $middleware->handleRequest($request, $mock);
+        $actualResponse = $middleware->handleRequest($request, $mock);
 
-        $this->assertSame(Status::OK, $actualResponse->getStatus());
+        $this->assertSame(HttpStatus::OK, $actualResponse->getStatus());
         $this->assertSame('*', $actualResponse->getHeader('Access-Control-Allow-Origin'));
         $this->assertSame('true', $actualResponse->getHeader('Access-Control-Allow-Credentials'));
     }
@@ -178,13 +177,13 @@ class CorsMiddlewareTest extends AsyncTestCase {
         $mock->expects($this->once())
             ->method('handleRequest')
             ->with($request)
-            ->willReturn(new Success($response));
+            ->willReturn($response);
 
         $config = $this->configuration();
         $middleware = new CorsMiddleware($config);
-        $actualResponse = yield $middleware->handleRequest($request, $mock);
+        $actualResponse = $middleware->handleRequest($request, $mock);
 
-        $this->assertSame(Status::OK, $actualResponse->getStatus());
+        $this->assertSame(HttpStatus::OK, $actualResponse->getStatus());
         $this->assertSame(
             'https://labrador.example.com',
             $actualResponse->getHeader('Access-Control-Allow-Origin')
@@ -204,9 +203,9 @@ class CorsMiddlewareTest extends AsyncTestCase {
             ->method('handleRequest');
 
         $middleware = new CorsMiddleware($this->configuration());
-        $actualResponse = yield $middleware->handleRequest($request, $mock);
+        $actualResponse = $middleware->handleRequest($request, $mock);
 
-        $this->assertSame(Status::OK, $actualResponse->getStatus());
+        $this->assertSame(HttpStatus::OK, $actualResponse->getStatus());
         $this->assertSame(
             'https://labrador.example.com',
             $actualResponse->getHeader('Access-Control-Allow-Origin')
@@ -236,9 +235,9 @@ class CorsMiddlewareTest extends AsyncTestCase {
             ->method('handleRequest');
 
         $middleware = new CorsMiddleware($this->configuration());
-        $actualResponse = yield $middleware->handleRequest($request, $mock);
+        $actualResponse = $middleware->handleRequest($request, $mock);
 
-        $this->assertSame(Status::OK, $actualResponse->getStatus());
+        $this->assertSame(HttpStatus::OK, $actualResponse->getStatus());
         $this->assertSame(
             'https://labrador.example.com',
             $actualResponse->getHeader('Access-Control-Allow-Origin')
@@ -271,9 +270,9 @@ class CorsMiddlewareTest extends AsyncTestCase {
             'origins' => ['*']
         ]);
         $middleware = new CorsMiddleware($config);
-        $actualResponse = yield $middleware->handleRequest($request, $mock);
+        $actualResponse = $middleware->handleRequest($request, $mock);
 
-        $this->assertSame(Status::OK, $actualResponse->getStatus());
+        $this->assertSame(HttpStatus::OK, $actualResponse->getStatus());
         $this->assertSame('*', $actualResponse->getHeader('Access-Control-Allow-Origin'));
         $this->assertSame(
             'GET, POST, PUT, DELETE',
@@ -304,9 +303,9 @@ class CorsMiddlewareTest extends AsyncTestCase {
             'origins' => ['*']
         ]);
         $middleware = new CorsMiddleware($config);
-        $actualResponse = yield $middleware->handleRequest($request, $mock);
+        $actualResponse = $middleware->handleRequest($request, $mock);
 
-        $this->assertSame(Status::OK, $actualResponse->getStatus());
+        $this->assertSame(HttpStatus::OK, $actualResponse->getStatus());
         $this->assertSame('*', $actualResponse->getHeader('Access-Control-Allow-Origin'));
         $this->assertSame(
             'GET, POST, PUT, DELETE',
@@ -334,9 +333,9 @@ class CorsMiddlewareTest extends AsyncTestCase {
         $middleware = new CorsMiddleware($this->configuration([
             'allow_credentials' => false
         ]));
-        $actualResponse = yield $middleware->handleRequest($request, $mock);
+        $actualResponse = $middleware->handleRequest($request, $mock);
 
-        $this->assertSame(Status::OK, $actualResponse->getStatus());
+        $this->assertSame(HttpStatus::OK, $actualResponse->getStatus());
         $this->assertSame(
             'https://labrador.example.com',
             $actualResponse->getHeader('Access-Control-Allow-Origin')
@@ -364,9 +363,9 @@ class CorsMiddlewareTest extends AsyncTestCase {
         $middleware = new CorsMiddleware($this->configuration([
             'allowed_headers' => []
         ]));
-        $actualResponse = yield $middleware->handleRequest($request, $mock);
+        $actualResponse = $middleware->handleRequest($request, $mock);
 
-        $this->assertSame(Status::OK, $actualResponse->getStatus());
+        $this->assertSame(HttpStatus::OK, $actualResponse->getStatus());
         $this->assertSame(
             'https://labrador.example.com',
             $actualResponse->getHeader('Access-Control-Allow-Origin')
@@ -392,9 +391,9 @@ class CorsMiddlewareTest extends AsyncTestCase {
         $middleware = new CorsMiddleware($this->configuration([
             'exposable_headers' => []
         ]));
-        $actualResponse = yield $middleware->handleRequest($request, $mock);
+        $actualResponse = $middleware->handleRequest($request, $mock);
 
-        $this->assertSame(Status::OK, $actualResponse->getStatus());
+        $this->assertSame(HttpStatus::OK, $actualResponse->getStatus());
         $this->assertSame(
             'https://labrador.example.com',
             $actualResponse->getHeader('Access-Control-Allow-Origin')
@@ -421,9 +420,9 @@ class CorsMiddlewareTest extends AsyncTestCase {
             ->method('handleRequest');
 
         $middleware = new CorsMiddleware($this->configuration());
-        $actualResponse = yield $middleware->handleRequest($request, $mock);
+        $actualResponse = $middleware->handleRequest($request, $mock);
 
-        $this->assertSame(Status::FORBIDDEN, $actualResponse->getStatus());
+        $this->assertSame(HttpStatus::FORBIDDEN, $actualResponse->getStatus());
         $this->assertNulL($actualResponse->getHeader('Access-Control-Allow-Origin'));
         $this->assertNull($actualResponse->getHeader('Access-Control-Allow-Methods'));
         $this->assertNull($actualResponse->getHeader('Access-Control-Allow-Headers'));
@@ -443,9 +442,9 @@ class CorsMiddlewareTest extends AsyncTestCase {
             ->method('handleRequest');
 
         $middleware = new CorsMiddleware($this->configuration(['allowed_methods' => ['GET']]));
-        $actualResponse = yield $middleware->handleRequest($request, $mock);
+        $actualResponse = $middleware->handleRequest($request, $mock);
 
-        $this->assertSame(Status::METHOD_NOT_ALLOWED, $actualResponse->getStatus());
+        $this->assertSame(HttpStatus::METHOD_NOT_ALLOWED, $actualResponse->getStatus());
         $this->assertNulL($actualResponse->getHeader('Access-Control-Allow-Origin'));
         $this->assertNull($actualResponse->getHeader('Access-Control-Allow-Methods'));
         $this->assertNull($actualResponse->getHeader('Access-Control-Allow-Headers'));
@@ -467,9 +466,9 @@ class CorsMiddlewareTest extends AsyncTestCase {
         $middleware = new CorsMiddleware($this->configuration([
             'allowed_headers' => ['X-Not-Set-In-Options', 'Content-Type']
         ]));
-        $actualResponse = yield $middleware->handleRequest($request, $mock);
+        $actualResponse = $middleware->handleRequest($request, $mock);
 
-        $this->assertSame(Status::FORBIDDEN, $actualResponse->getStatus());
+        $this->assertSame(HttpStatus::FORBIDDEN, $actualResponse->getStatus());
         $this->assertNulL($actualResponse->getHeader('Access-Control-Allow-Origin'));
         $this->assertNull($actualResponse->getHeader('Access-Control-Allow-Methods'));
         $this->assertNull($actualResponse->getHeader('Access-Control-Allow-Headers'));
@@ -487,9 +486,9 @@ class CorsMiddlewareTest extends AsyncTestCase {
 
         $middleware = new CorsMiddleware($this->configuration(['max_age' => null]));
         /** @var Response $actualResponse */
-        $actualResponse = yield $middleware->handleRequest($request, $mock);
+        $actualResponse = $middleware->handleRequest($request, $mock);
 
-        $this->assertSame(Status::OK, $actualResponse->getStatus());
+        $this->assertSame(HttpStatus::OK, $actualResponse->getStatus());
         $this->assertSame(
             'https://labrador.example.com',
             $actualResponse->getHeader('Access-Control-Allow-Origin')

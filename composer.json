@@ -13,7 +13,7 @@
   "prefer-stable": true,
   "require-dev": {
     "phpunit/phpunit": "^9.0",
-    "amphp/phpunit-util": "^1.3",
+    "amphp/phpunit-util": "^3",
     "cspray/labrador-coding-standard": "0.2.0"
   },
   "autoload": {
