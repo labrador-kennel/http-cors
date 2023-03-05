@@ -10,28 +10,25 @@ jobs:
   build-test:
 
     runs-on: ubuntu-latest
+    name: Run tests (${{ matrix.php }})
+
+    strategy:
+      matrix:
+        php: [8.1, 8.2]
 
     steps:
       - uses: actions/checkout@v2
-      - name: Composer 7
-        uses: php-actions/composer@v5
-        with:
-          php_version: 7
-      - name: PHP 7 tests
-        uses: php-actions/phpunit@v2
-        with:
-          version: 9
-          php_version: 7
 
-      - name: Composer 8
-        uses: php-actions/composer@v5
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
         with:
-          php_version: 8
-      - name: PHP 8 tests
-        uses: php-actions/phpunit@v2
-        with:
-          version: 9
-          php_version: 8
+          php-version: ${{ matrix.php }}
+
+      - name: Install dependencies
+        run: composer install
+
+      - name: PHPUnit ${{ matrix.php }} tests
+        run: ./vendor/bin/phpunit
 
       - name: Run code sniffer
         run: composer run code-lint
