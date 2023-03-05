@@ -97,7 +97,7 @@ final class CorsMiddleware implements Middleware {
 
             $maxAge = $configuration->getMaxAge();
             if (isset($maxAge)) {
-                $response->setHeader('Access-Control-Max-Age', $configuration->getMaxAge());
+                $response->setHeader('Access-Control-Max-Age', (string) $maxAge);
             }
         }
 
