@@ -1,5 +1,17 @@
 # Changelog
 
+## Unreleased
+
+### Changed
+
+- Add support for amphp v3
+- Add support for PHP 8.1 & 8.2
+
+### Removed
+
+- Support for amphp v1 & v2
+- Support for PHP < 8.1
+
 ## 0.3.1 - 2021-06-17
 
 ### Fixed

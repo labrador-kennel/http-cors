@@ -2,14 +2,11 @@
 
 namespace Cspray\Labrador\Http\Cors;
 
+use Amp\Http\HttpStatus;
 use Amp\Http\Server\Middleware;
 use Amp\Http\Server\Request;
 use Amp\Http\Server\RequestHandler;
 use Amp\Http\Server\Response;
-use Amp\Http\Status;
-use Amp\Promise;
-
-use function Amp\call;
 
 /**
  * An Amp http-server middleware that is responsible for handling CORS request.
@@ -27,37 +24,29 @@ final class CorsMiddleware implements Middleware {
     /**
      * Will handle all OPTIONS Requests based on the Configuration for the given Request and ensure all non-OPTIONS
      * requests have appropriate CORS headers.
-     *
-     * @param Request $request
-     * @param RequestHandler $requestHandler
-     *
-     * @return Promise<Response>
      */
-    public function handleRequest(Request $request, RequestHandler $requestHandler) : Promise {
-        return call(function() use($request, $requestHandler) {
-            if ($request->getMethod() === 'OPTIONS') {
-                return $this->handleOptionRequest($request);
-            }
+    public function handleRequest(Request $request, RequestHandler $requestHandler): Response {
+        if ($request->getMethod() === 'OPTIONS') {
+            return $this->handleOptionRequest($request);
+        }
 
-            /** @var Response $response */
-            $response = yield $requestHandler->handleRequest($request);
+        $response = $requestHandler->handleRequest($request);
 
-            if ($request->hasHeader('Origin')) {
-                $configuration = $this->configurationLoader->loadConfiguration($request);
-                if ($this->doesOriginHeaderMatch($request, $configuration)) {
-                    $originResponseHeader = $this->getOriginResponseHeader($request, $configuration);
-                    $response->setHeader('Access-Control-Allow-Origin', $originResponseHeader);
-                    $varyHeader = $response->getHeader('Vary');
-                    $varyHeader = isset($varyHeader) ? $varyHeader . ', Origin' : 'Origin';
-                    $response->setHeader('Vary', $varyHeader);
-                    if ($configuration->shouldAllowCredentials()) {
-                        $response->setHeader('Access-Control-Allow-Credentials', 'true');
-                    }
+        if ($request->hasHeader('Origin')) {
+            $configuration = $this->configurationLoader->loadConfiguration($request);
+            if ($this->doesOriginHeaderMatch($request, $configuration)) {
+                $originResponseHeader = $this->getOriginResponseHeader($request, $configuration);
+                $response->setHeader('Access-Control-Allow-Origin', $originResponseHeader);
+                $varyHeader = $response->getHeader('Vary');
+                $varyHeader = isset($varyHeader) ? $varyHeader . ', Origin' : 'Origin';
+                $response->setHeader('Vary', $varyHeader);
+                if ($configuration->shouldAllowCredentials()) {
+                    $response->setHeader('Access-Control-Allow-Credentials', 'true');
                 }
             }
+        }
 
-            return $response;
-        });
+        return $response;
     }
 
     private function handleOptionRequest(Request $request) : Response {
@@ -75,9 +64,9 @@ final class CorsMiddleware implements Middleware {
         });
 
         if (!$this->doesOriginHeaderMatch($request, $configuration) || !empty($badCorsHeaders)) {
-            $response->setStatus(Status::FORBIDDEN);
+            $response->setStatus(HttpStatus::FORBIDDEN);
         } elseif (!in_array($corsMethod, $allowedMethods)) {
-            $response->setStatus(Status::METHOD_NOT_ALLOWED);
+            $response->setStatus(HttpStatus::METHOD_NOT_ALLOWED);
         } else {
             $originResponseHeader = $this->getOriginResponseHeader($request, $configuration);
             $response->setHeader('Access-Control-Allow-Origin', $originResponseHeader);
@@ -103,7 +92,7 @@ final class CorsMiddleware implements Middleware {
 
             $maxAge = $configuration->getMaxAge();
             if (isset($maxAge)) {
-                $response->setHeader('Access-Control-Max-Age', $configuration->getMaxAge());
+                $response->setHeader('Access-Control-Max-Age', (string) $maxAge);
             }
         }
 
