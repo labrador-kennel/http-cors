@@ -24,11 +24,6 @@ final class CorsMiddleware implements Middleware {
     /**
      * Will handle all OPTIONS Requests based on the Configuration for the given Request and ensure all non-OPTIONS
      * requests have appropriate CORS headers.
-     *
-     * @param Request $request
-     * @param RequestHandler $requestHandler
-     *
-     * @return Response
      */
     public function handleRequest(Request $request, RequestHandler $requestHandler): Response {
         if ($request->getMethod() === 'OPTIONS') {
