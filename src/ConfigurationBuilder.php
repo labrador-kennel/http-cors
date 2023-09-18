@@ -77,12 +77,6 @@ class ConfigurationBuilder {
                 private array $exposableHeaders,
                 private bool $allowCredentials
             ) {
-                $this->origins = $origins;
-                $this->methods = $methods;
-                $this->maxAge = $maxAge;
-                $this->allowedHeaders = $allowedHeaders;
-                $this->exposableHeaders = $exposableHeaders;
-                $this->allowCredentials = $allowCredentials;
             }
 
             /**
