@@ -94,7 +94,7 @@ final class MultiTenantConfigurationLoader implements ConfigurationLoader {
 #### 4. Handle no Configuration for Request
 
 If you've added logic to have many types of Configurations it is likely you may encounter a Request that does not match 
-that logic and you cannot reliably determine a Configuration for. Based on your application's needs you will need to 
+that logic and you cannot reliably determine a Configuration for. Based on your application's needs you will have to 
 determine how to handle this scenario to fix the Null Pointer Error that can occur in code from step 3.
 
 ##### Option 1: Return a default Configuration instance
