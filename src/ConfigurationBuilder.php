@@ -68,27 +68,15 @@ class ConfigurationBuilder {
             $this->allowedHeaders,
             $this->exposableHeaders,
             $this->allowCredentials) implements Configuration {
-            private $origins;
-            private $methods;
-            private $maxAge;
-            private $allowedHeaders;
-            private $exposableHeaders;
-            private $allowCredentials;
 
             public function __construct(
-                array $origins,
-                array $methods,
-                ?int $maxAge,
-                array $allowedHeaders,
-                array $exposableHeaders,
-                bool $allowCredentials
+                private array $origins,
+                private array $methods,
+                private ?int $maxAge,
+                private array $allowedHeaders,
+                private array $exposableHeaders,
+                private bool $allowCredentials
             ) {
-                $this->origins = $origins;
-                $this->methods = $methods;
-                $this->maxAge = $maxAge;
-                $this->allowedHeaders = $allowedHeaders;
-                $this->exposableHeaders = $exposableHeaders;
-                $this->allowCredentials = $allowCredentials;
             }
 
             /**
